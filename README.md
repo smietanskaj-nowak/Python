@@ -14,9 +14,8 @@ Notebooks included:
 1. **python_modelling.ipynb** – classical regression and classification models.  
 2. **data_visualization_decision_tree.ipynb** – decision tree visualization and interpretability.  
 3. **Neural_networks.ipynb** – feed-forward neural networks (TensorFlow/Keras).  
-4. **Spark_project_air quality analysis.ipynb** – big data air quality analysis with PySpark.  
-5. **xgboost.ipynb** – feature importance analysis with Gradient Boosting (XGBoost, H2O).  
-
+4. **Spark_project_air quality analysis.ipynb** – big data air quality analysis with PySpark.
+   
 ---
 
 ### Branch: `hackathon`
