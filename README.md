@@ -7,7 +7,7 @@ This repository contains Python-based projects demonstrating **machine learning,
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ### Branch: `projects`
 Notebooks included:
@@ -33,7 +33,7 @@ Hackathon notebooks and datasets:
 
 ---
 
-## 🛠️ Tools & Libraries
+## Tools & Libraries
 - **Core**: `pandas`, `numpy`, `matplotlib`, `seaborn`  
 - **Classical ML**: `scikit-learn`, `xgboost`, `h2o`  
 - **Deep Learning**: `tensorflow`, `keras`  
@@ -42,7 +42,7 @@ Hackathon notebooks and datasets:
 
 ---
 
-## 🎯 Objectives
+## Goals
 - Build and compare ML models for structured and unstructured datasets.  
 - Visualize data patterns, decision boundaries, and feature importances.  
 - Apply deep learning to predictive modeling tasks.  
@@ -51,7 +51,7 @@ Hackathon notebooks and datasets:
 
 ---
 
-## 🚀 How to Run
+## How to Run
 1. Clone the repository and choose a branch:
    ```bash
    git clone https://github.com/yourusername/ml-projects.git
