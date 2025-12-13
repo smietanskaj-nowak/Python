@@ -15,7 +15,8 @@ Notebooks included:
 2. **data_visualization_decision_tree.ipynb** – decision tree visualization and interpretability.  
 3. **Neural_networks.ipynb** – feed-forward neural networks (TensorFlow/Keras).  
 4. **Spark_project_air quality analysis.ipynb** – big data air quality analysis with PySpark.  
-5. **xgboost.ipynb** – feature importance analysis with Gradient Boosting (XGBoost, H2O).  
+5. **xgboost.ipynb** – feature importance analysis with Gradient Boosting (XGBoost, H2O).
+6. **cnn_pytorch.ipynb** – convolutional neural network for image classification (PyTorch, FashionMNIST benchmark).  
 
 ---
 
@@ -34,16 +35,17 @@ Hackathon notebooks and datasets:
 
 ---
 
-## 🛠️ Tools & Libraries
+## Tools & Libraries
 - **Core**: `pandas`, `numpy`, `matplotlib`, `seaborn`  
 - **Classical ML**: `scikit-learn`, `xgboost`, `h2o`  
-- **Deep Learning**: `tensorflow`, `keras`  
+- **Deep Learning**: `tensorflow`, `keras`, `pytorch`, `torchvision`  
 - **Big Data**: `pyspark`  
-- **Visualization**: `graphviz`  
+- **Visualization**: `graphviz`
+- **Utilities**: `tqdm`   
 
 ---
 
-## 🎯 Objectives
+## Objectives
 - Build and compare ML models for structured and unstructured datasets.  
 - Visualize data patterns, decision boundaries, and feature importances.  
 - Apply deep learning to predictive modeling tasks.  
@@ -52,7 +54,7 @@ Hackathon notebooks and datasets:
 
 ---
 
-## 🚀 How to Run
+## How to Run
 1. Clone the repository and choose a branch:
    ```bash
    git clone https://github.com/yourusername/ml-projects.git
