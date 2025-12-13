@@ -48,7 +48,8 @@ Hackathon notebooks and datasets:
 ## Objectives
 - Build and compare ML models for structured and unstructured datasets.  
 - Visualize data patterns, decision boundaries, and feature importances.  
-- Apply deep learning to predictive modeling tasks.  
+- Apply deep learning to predictive modeling tasks.
+- Implement and analyze CNN architectures for image classification.  
 - Handle large-scale data with Spark.  
 - Participate in real-world hackathons (cheminformatics, drug discovery).  
 
