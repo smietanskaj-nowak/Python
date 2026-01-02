@@ -1,10 +1,10 @@
 # Transformer-Based Text Classification (SQuAD)
 
-This project demonstrates **fine-tuning and evaluation of pretrained transformer models**
+This project demonstrates **fine-tuning and comparative evaluation of pretrained transformer models**
 for a **text classification task** using the Hugging Face ecosystem.
 
-The goal is to analyze how different transformer architectures perform in terms of
-**classification accuracy and training cost**, rather than to achieve state-of-the-art results.
+The focus is on understanding **performance–cost trade-offs** between different transformer architectures,
+rather than achieving state-of-the-art results on a single model.
 
 ---
 
@@ -14,27 +14,27 @@ The goal is to analyze how different transformer architectures perform in terms 
 - Models: Pretrained transformer architectures (BERT-like)
 - Framework: Hugging Face Transformers
 - Dataset: Processed subset of SQuAD adapted for classification
-- Focus: Model performance vs. computational cost
+- Focus: Accuracy, training time, and architectural trade-offs
 
-This is an applied NLP project showing a complete, reproducible workflow:
-from data preparation to model evaluation.
+This is an applied NLP project presenting a **complete and reproducible workflow**,
+from data preparation and fine-tuning to cross-model comparison.
 
 ---
 
 ## 🧠 Problem Formulation
 
 Although the original **SQuAD dataset** is designed for question answering,
-it is transformed here into a **classification problem** by constructing
+it is transformed here into a **supervised classification problem** by constructing
 (context, question, label) examples.
 
-This allows transformer models to be evaluated in a supervised classification setting,
-highlighting architectural trade-offs rather than dataset-specific performance.
+This formulation allows different transformer architectures to be compared
+in a controlled classification setting, independent of QA-specific metrics.
 
 ---
 
 ## 🔧 Workflow
 
-1. **Data Loading**
+1. **Data Loading and Preprocessing**
    - Load and preprocess SQuAD-style data
    - Convert hierarchical QA structure into flat classification samples
 
@@ -50,9 +50,21 @@ highlighting architectural trade-offs rather than dataset-specific performance.
    - Measure classification performance (e.g. accuracy)
    - Track training time to assess computational cost
 
-5. **Comparison**
-   - Compare different transformer architectures
+5. **Model Comparison**
+   - Compare multiple transformer architectures
    - Analyze trade-offs between model size, accuracy, and efficiency
+
+---
+
+## 📂 Project Files
+
+- `hf_transformer_finetuning_training.ipynb`  
+  End-to-end fine-tuning pipeline for transformer-based text classification:
+  data preparation, tokenization, training, and basic evaluation.
+
+- `hf_transformer_finetuning_comparison.ipynb`  
+  Comparative analysis of different pretrained transformer architectures,
+  focusing on classification performance and training cost.
 
 ---
 
@@ -61,29 +73,23 @@ highlighting architectural trade-offs rather than dataset-specific performance.
 - Python
 - Hugging Face Transformers
 - Hugging Face Datasets
-- scikit-learn
 - PyTorch
+- scikit-learn
 - NumPy
 
 ---
 
 ## 🎯 Key Takeaways
 
-- Pretrained transformers can be efficiently adapted to classification tasks
-- Larger models do not always justify higher computational cost
-- Model selection should consider **performance–cost trade-offs**, not accuracy alone
-
----
-
-## 📂 Files
-
-- `transformer_text_classification.ipynb` – main notebook with training and evaluation pipeline
+- Pretrained transformer models can be efficiently adapted to classification tasks
+- Increased model size does not always justify higher computational cost
+- Practical model selection should consider **accuracy, efficiency, and scalability**
 
 ---
 
 ## 🚀 Possible Extensions
 
-- Add cross-model benchmarking with standardized evaluation
-- Include memory and inference-time measurements
+- Add standardized cross-task benchmarking
+- Include memory usage and inference-time measurements
 - Extend to multi-label or multi-task classification
-- Integrate results into a broader LLM evaluation framework
+- Integrate results into a broader LLM evaluation or benchmarking framework
