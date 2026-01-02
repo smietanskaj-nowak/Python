@@ -18,8 +18,7 @@ rather than on isolated benchmarks or toy examples.
 - **llm/** – large language model–oriented projects  
   - fine-tuning and comparison of transformer-based models  
   - inference workflows and prompt engineering  
-  - evaluation and benchmarking setups  
-  - retrieval-augmented generation (RAG, in progress)  
+  - evaluation and benchmarking setups 
 
 - **hackathons/** – applied, real-world projects  
   - cheminformatics datasets (ChEMBL, ZINC)  
