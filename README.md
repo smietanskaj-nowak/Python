@@ -1,64 +1,60 @@
 # Machine Learning & Data Science Projects
 
-This repository contains Python-based projects demonstrating **machine learning, data analysis, and visualization**. It is organized into two branches:
-
-- **projects** → collection of general ML notebooks (modeling, decision trees, neural networks, Spark, feature importance).  
-- **hackathon** → dedicated branch with hackathon work on cheminformatics datasets (ChEMBL, ZINC, receptor activity prediction).  
+This repository contains Python-based projects in **machine learning, NLP, and large language models (LLMs)**,
+focused on **practical modeling workflows, evaluation, and interpretability**.
+The emphasis is on understanding model behavior, assumptions, and trade-offs,
+rather than on isolated benchmarks or toy examples.
 
 ---
 
 ## 📂 Repository Structure
 
-### Branch: `projects`
-Notebooks included:
-1. **python_modelling.ipynb** – classical regression and classification models.  
-2. **data_visualization_decision_tree.ipynb** – decision tree visualization and interpretability.  
-3. **Neural_networks.ipynb** – feed-forward neural networks (TensorFlow/Keras).  
-4. **Spark_project_air quality analysis.ipynb** – big data air quality analysis with PySpark.  
-5. **xgboost.ipynb** – feature importance analysis with Gradient Boosting (XGBoost, H2O).
-6. **cnn_pytorch.ipynb** – convolutional neural network for image classification (PyTorch, FashionMNIST benchmark).  
+- **ml/** – classical machine learning and deep learning projects  
+  - regression and classification (scikit-learn, XGBoost)  
+  - neural networks and CNNs (TensorFlow, PyTorch)  
+  - model interpretability (e.g. feature importance, LIME)  
+  - large-scale data processing with PySpark  
+
+- **llm/** – large language model–oriented projects  
+  - fine-tuning and comparison of transformer-based models  
+  - inference workflows and prompt engineering  
+  - evaluation and benchmarking setups  
+  - retrieval-augmented generation (RAG, in progress)  
+
+- **hackathons/** – applied, real-world projects  
+  - cheminformatics datasets (ChEMBL, ZINC)  
+  - molecular descriptor engineering  
+  - explainable classification models  
 
 ---
 
-### Branch: `hackathon`
-Hackathon notebooks and datasets:
-- **hackathon.ipynb**, **hackathon_test.ipynb** – cheminformatics hackathon project.  
-- **Datasets**:  
-  - `Chembl_data_5HT2A.csv` (training compounds),  
-  - `ZINC_data_5HT2A.csv` (external screening compounds),  
-  - `outaml_class.csv` (predicted activities).  
-- **Methods**: scikit-learn, XGBoost, feature engineering with molecular descriptors, cross-validation.  
-- **Visuals**: Feature importance plots (`predictors.png`, `predictors_important.png`).  
+## 🛠 Tools & Libraries
 
-**Goal**: Predict 5-HT2A receptor activity and evaluate molecular descriptors as predictive features.  
-**Outcome**: High-performance classification models with explainable feature rankings.  
+**Core:** pandas, NumPy, matplotlib, seaborn  
+**Classical ML:** scikit-learn, XGBoost, H2O  
+**Deep Learning:** TensorFlow, Keras, PyTorch, torchvision  
+**LLM & NLP:** Hugging Face Transformers, Ollama  
+**Big Data:** PySpark  
+**Visualization:** Graphviz  
+**Utilities:** tqdm  
 
 ---
 
-## Tools & Libraries
-- **Core**: `pandas`, `numpy`, `matplotlib`, `seaborn`  
-- **Classical ML**: `scikit-learn`, `xgboost`, `h2o`  
-- **Deep Learning**: `tensorflow`, `keras`, `pytorch`, `torchvision`  
-- **Big Data**: `pyspark`  
-- **Visualization**: `graphviz`
-- **Utilities**: `tqdm`   
+## 🎯 Project Focus
+
+- applied machine learning and NLP  
+- model evaluation and interpretability  
+- comparison of classical ML and transformer-based approaches  
+- scalable and reproducible data workflows  
+- real-world, domain-driven applications (e.g. cheminformatics)  
 
 ---
 
-## Objectives
-- Build and compare ML models for structured and unstructured datasets.  
-- Visualize data patterns, decision boundaries, and feature importances.  
-- Apply deep learning to predictive modeling tasks.
-- Implement and analyze CNN architectures for image classification.  
-- Handle large-scale data with Spark.  
-- Participate in real-world hackathons (cheminformatics, drug discovery).  
+## ▶️ How to Run
 
----
+Clone the repository and explore individual project directories:
 
-## How to Run
-1. Clone the repository and choose a branch:
-   ```bash
-   git clone https://github.com/yourusername/ml-projects.git
-   cd ml-projects
-   git checkout projects   # or: git checkout hackathon
+```bash
+git clone https://github.com/yourusername/ml-projects.git
+cd ml-projects
 
