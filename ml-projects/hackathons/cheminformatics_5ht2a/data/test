@@ -1,0 +1,303 @@
+# This Python 3 environment comes with many helpful analytics libraries installed
+# It is defined by the kaggle/python Docker image: https://github.com/kaggle/docker-python
+# For example, here's several helpful packages to load
+
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+
+# Input data files are available in the read-only "../input/" directory
+# For example, running this (by clicking run or pressing Shift+Enter) will list all files under the input directory
+
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+# You can write up to 20GB to the current directory (/kaggle/working/) that gets preserved as output when you create a version using "Save & Run All" 
+# You can also write temporary files to /kaggle/temp/, but they won't be saved outside of the current session
+## Data loading
+zinc_filename = "/kaggle/input/receptor-affinity-prediction-hackaton/ZINC_data_5HT2A.csv"
+chembl_filename = "/kaggle/input/receptor-affinity-prediction-hackaton/Chembl_data_5HT2A.csv"
+mordred_filename = "/kaggle/input/receptor-affinity-prediction-hackaton/Mordred_descriptors_database.csv"
+test_data_filename = "/kaggle/input/receptor-affinity-prediction-hackaton/test_data_no_pKi.csv"
+import pandas as pd
+zinc_raw_df = pd.read_csv(zinc_filename)
+chembl_raw_df = pd.read_csv(chembl_filename)
+chembl_raw_df['pKi_recalculated'] = -np.log10(chembl_raw_df.query("relation_clean == '='")['Standard Value'] / 1e9)
+chembl_raw_df['pKi_delta'] = chembl_raw_df['pKi_recalculated'] - chembl_raw_df['pKi_numeric']
+chembl_raw_df.isnull().sum()
+chembl_raw_df = chembl_raw_df.dropna(subset='pKi_recalculated')
+chembl_raw_df.isnull().sum()
+chembl_raw_df.info()
+zinc_subset = zinc_raw_df[['pKi_numeric', 'smiles']].rename(columns={'smiles': 'Smiles', 'pKi_numeric': 'pKi'})
+chembl_subset = chembl_raw_df.query("relation_clean == '='")[['pKi_recalculated', 'Smiles']].rename(columns={'pKi_recalculated': 'pKi'})
+merged_data = pd.concat([zinc_subset, chembl_subset], ignore_index=True)
+merged_data['pKi'].isnull().sum()
+merged_data = merged_data.reset_index(drop=False)
+
+def deduplicate_smiles(smile):
+    if len(smile) == 1:
+        return smile
+    delta = smile['pKi'].max() - smile['pKi'].min()
+    if delta > 0.1:
+        return pd.DataFrame(columns=smile.columns)
+    else:
+        idx = smile['index'].idxmin()
+        return smile.loc[[idx]]
+
+
+deduplicated_df = merged_data.groupby('Smiles', group_keys=False).apply(deduplicate_smiles).drop(columns='index')
+
+deduplicated_df.isnull().sum()
+merged_data['pKi'].isna().sum()
+mordred_df = pd.read_csv(mordred_filename)
+smiles_df = mordred_df['smiles']
+mordred_df = mordred_df.apply(pd.to_numeric, errors='coerce')
+
+mordred_df_cleaned.dtypes.unique()
+null_proportion = mordred_df.isnull().mean()
+mordred_df_cleaned = mordred_df.loc[:, null_proportion <= 0.1]
+mordred_df_cleaned = mordred_df.drop(columns=mordred_df.loc[:, mordred_df.nunique() < 2].columns) # usun kolumny które nie niosą wartości
+mordred_df_cleaned = mordred_df_cleaned.fillna(mordred_df_cleaned.median(numeric_only=True))
+mordred_df_cleaned['smiles'] = smiles_df.to_frame()
+mordred_df_cleaned
+mordred_df_cleaned.dtypes
+for col in mordred_df.loc[:, (mordred_df.nunique() > 2) & (mordred_df.nunique() < 10)].columns:
+    print(f"Kolumna: {col}")
+    print(mordred_df[col].unique())
+    print("-" * 30)
+mordred_df_cleaned.dtypes
+final_df = pd.merge(mordred_df_cleaned, deduplicated_df, left_on='smiles', right_on='Smiles', how='inner')
+final_df = final_df.drop(columns=['smiles', 'Smiles'], axis=1)
+final_df = final_df.astype({col: 'int' for col in final_df.select_dtypes(include='bool').columns})
+
+final_df
+from sklearn.model_selection import train_test_split
+# 'pKi' to zmienna docelowa
+X = final_df.drop(columns=['pKi'])
+y = final_df['pKi']
+
+# train+val oraz test (80% / 20%)
+X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# train+val na osobne train i val (75% / 25% z tych 80%)
+X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.25, random_state=42)
+
+# finalne proporcje:
+# - train: 60%
+# - val: 20%
+# - test: 20%
+
+print(f"Train: {X_train.shape}, Validation: {X_val.shape}, Test: {X_test.shape}")
+XGBoost
+import shap
+import xgboost as xgb
+
+model = xgb.XGBRegressor(
+    n_estimators=500,
+    early_stopping_rounds=20,
+    eval_metric='rmse',
+    use_label_encoder=False
+)
+
+model.fit(
+    X_train,
+    y_train,
+    eval_set=[(X_val, y_val)],
+    verbose=True
+)
+
+%matplotlib inline
+# SHAP explainer
+explainer = shap.Explainer(model, X_train)
+shap_values = explainer(X_test)
+
+# 📊 Globalna ważność zmiennych
+shap.plots.bar(shap_values)
+
+# 🐝 Beehive plot (pełniejsza analiza globalna)
+shap.plots.beeswarm(shap_values)
+
+# 🌊 Dla jednej predykcji – waterfall
+shap.plots.waterfall(shap_values[0])
+Feature selection
+import pandas as pd
+
+# Pobranie średniego wpływu
+mean_abs_shap = np.abs(shap_values.values).mean(axis=0)
+top_indices = np.argsort(mean_abs_shap)[::-1][:400]
+top_features = X_train.columns[top_indices]
+
+print(top_features)
+# X_train_top = X_train[top_features]
+# X_val_top = X_val[top_features]
+
+
+# model_top = xgb.XGBRegressor(
+#     n_estimators=500,
+#     early_stopping_rounds=20,
+#     eval_metric='rmse',
+#     verbosity=1
+# )
+
+# model_top.fit(
+#     X_train_top,
+#     y_train,
+#     eval_set=[(X_val_top, y_val)],
+#     verbose=True
+# )
+# from sklearn.metrics import mean_squared_error
+
+# y_pred = model_top.predict(X_val_top)
+# rmse = mean_squared_error(y_val, y_pred, squared=False)
+# print(f"RMSE na walidacji: {rmse:.4f}")
+Random Forest
+# from sklearn.ensemble import RandomForestRegressor
+
+# model_rf = RandomForestRegressor(n_estimators=200, random_state=42)
+# model_rf.fit(X_train_top, y_train)
+# from sklearn.metrics import mean_squared_error
+
+# y_pred_rf = model_rf.predict(X_val_top)
+# rmse_rf = mean_squared_error(y_val, y_pred_rf, squared=False)
+# print(f"RMSE (Random Forest): {rmse_rf:.4f}")
+H2O manual
+import h2o
+from h2o.grid.grid_search import H2OGridSearch
+from h2o.estimators.gbm import H2OGradientBoostingEstimator
+
+h2o.init()
+
+# Załaduj dane jako H2OFrame (z Pandas, CSV lub innego źródła)
+h2o_train = h2o.H2OFrame(X_train_top.join(y_train))
+h2o_val = h2o.H2OFrame(X_val_top.join(y_val))
+
+# Ustaw kolumny
+x = X_train_top.columns.tolist()
+y = y_train.name
+hyper_params = {
+    'max_depth': [3, 5, 7, 9],
+    'learn_rate': [0.01, 0.05, 0.1],
+    'sample_rate': [0.8, 1.0],
+    'col_sample_rate': [0.8, 1.0]
+}
+gbm_model = H2OGradientBoostingEstimator(
+    ntrees=200,
+    stopping_rounds=5,
+    stopping_metric='RMSE',
+    stopping_tolerance=0.001,
+    seed=1234
+)
+
+grid = H2OGridSearch(
+    model=gbm_model,
+    hyper_params=hyper_params,
+    grid_id='gbm_grid_shap',
+    search_criteria={
+        'strategy': 'RandomDiscrete',
+        'max_models': 20,
+        'seed': 1234
+    }
+)
+
+grid.train(x=x, y=y, training_frame=h2o_train, validation_frame=h2o_val)
+
+sorted_grid = grid.get_grid(sort_by='rmse', decreasing=False)
+best_model = sorted_grid.models[0]
+perf = best_model.model_performance(h2o_val)
+print(perf)
+model_path = h2o.save_model(model=best_model, path="./models", force=True)
+
+print(f"Model zapisany w: {model_path}")
+H2O Auto ML
+import h2o
+from h2o.automl import H2OAutoML
+
+h2o.init()
+
+# Zakładamy, że masz Pandasowe: X_train_top, y_train, X_val_top, y_val
+# Połącz cechy i target
+train_df = X_train_top.copy()
+train_df['target'] = y_train
+
+val_df = X_val_top.copy()
+val_df['target'] = y_val
+
+# Konwersja do H2OFrame
+train_h2o = h2o.H2OFrame(train_df)
+val_h2o = h2o.H2OFrame(val_df)
+
+# Kolumny
+x = X_train_top.columns.tolist()
+y = "target"
+
+# Ustaw typ targetu, jeśli klasyfikacja
+# train_h2o[y] = train_h2o[y].asfactor()
+# val_h2o[y] = val_h2o[y].asfactor()
+
+aml = H2OAutoML(
+    max_models=20,       # lub max_models=20
+    seed=1,
+    sort_metric="RMSE",         # lub "AUC", "logloss" – zależnie od zadania
+    verbosity="info"
+)
+
+aml.train(x=x, y=y, training_frame=train_h2o, validation_frame=val_h2o)
+# Leaderboard
+lb = aml.leaderboard
+print(lb)
+
+# Najlepszy model
+best_model = aml.leader
+
+# Ewaluacja
+perf = best_model.model_performance(val_h2o)
+print(perf)
+
+model_path = h2o.save_model(model=aml.leader, path="./models", force=True)
+
+print(f"Model zapisany w: {model_path}")
+H2O
+# import h2o
+# from h2o.automl import H2OAutoML
+
+# # Initialize H2O
+# h2o.init()
+
+# # Convert data to H2O frames
+# train = h2o.H2OFrame(pd.concat([X_train, y_train], axis=1))
+# valid = h2o.H2OFrame(pd.concat([X_val, y_val], axis=1))
+# test = h2o.H2OFrame(pd.concat([X_test, y_test], axis=1))
+
+# # Set target and features
+# target = 'pKi'
+# features = [col for col in train.columns if col != target]
+
+# # Initialize and train AutoML
+# aml = H2OAutoML(max_models=20,
+#                 seed=42,
+#                 max_runtime_secs=300)
+
+# aml.train(x=features, y=target,
+#           training_frame=train,
+#           validation_frame=valid)
+
+# # Get model performance
+# print("AutoML Leaderboard:")
+# print(aml.leaderboard)
+
+# print("\nBest model performance:")
+# print(aml.leader.model_performance(test))
+test_data = pd.read_csv(test_data_filename)
+test_data = pd.merge(mordred_df_cleaned, test_data, left_on='smiles', right_on='smiles', how='inner')
+test_data = test_data.drop(columns=['smiles'])
+test_data
+test_h2o = h2o.H2OFrame(test_data)
+predictions = aml.leader.predict(test_h2o)
+predictions_df = predictions.as_data_frame()
+# predictions_df
+id_df = test_data['ID']
+result = pd.concat([id_df, predictions_df], ignore_index=True, axis=1)
+result = result.rename(columns = {0: 'ID', 1: 'pKi'})
+# result
+result.to_csv('outaml.csv', index=False)
