@@ -7,7 +7,7 @@ rather than on isolated benchmarks or toy examples.
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 - **ml/** – classical machine learning and deep learning projects  
   - regression and classification (scikit-learn, XGBoost)  
@@ -28,7 +28,7 @@ rather than on isolated benchmarks or toy examples.
 
 ---
 
-## 🛠 Tools & Libraries
+## Tools & Libraries
 
 **Core:** pandas, NumPy, matplotlib, seaborn  
 **Classical ML:** scikit-learn, XGBoost, H2O  
@@ -40,7 +40,7 @@ rather than on isolated benchmarks or toy examples.
 
 ---
 
-## 🎯 Project Focus
+## Project Focus
 
 - applied machine learning and NLP  
 - model evaluation and interpretability  
@@ -50,7 +50,7 @@ rather than on isolated benchmarks or toy examples.
 
 ---
 
-## ▶️ How to Run
+## How to Run
 
 Clone the repository and explore individual project directories:
 
